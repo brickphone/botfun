@@ -42,6 +42,21 @@ const login = async (page: Page) => {
 	await page.waitForSelector('input[name="username"]') 
 	await page.type('input[name="username"]', username);
   await page.type('input[name="password"]', password);
+  
+
+  // Log the properties of the login button before clicking
+  const loginButton = await page.$('button[type="submit"]');
+  if (loginButton) {
+    const buttonProperties = await page.evaluate(button => {
+      return {
+        text: button.textContent,
+        disabled: button.disabled,
+        type: button.type,
+        class: button.className
+      };
+    }, loginButton);
+    console.log('Login button properties:', buttonProperties);
+  }
 
   await page.click('button[type="submit"]');
   await page.waitForNavigation();
