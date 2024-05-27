@@ -8,7 +8,7 @@ const password = 'Hurrmas123';
 const acceptCookies = async (page: Page) => {
   // Wait for the cookies popup and click "Accept All" if it appears
   try {
-    await page.waitForSelector('button', { visible: true, timeout: 5000 });
+    await page.waitForSelector('button', { visible: true, timeout: 10000 });
     
     // Use page.evaluate to handle the cookies popup
     const accepted = await page.evaluate(() => {
@@ -45,7 +45,7 @@ const login = async (page: Page) => {
   
 
   // Click login button
-  const accepted = await page.evaluate(() => {
+  const login = await page.evaluate(() => {
     const buttons = Array.from(document.querySelectorAll('button'));
     const loginButton = buttons.find(button => button.textContent?.includes('Log in') || button.textContent?.includes('Login'));
     if (loginButton) {
@@ -55,14 +55,41 @@ const login = async (page: Page) => {
     return false;
   });
 
-  if (accepted) {
+  if (login) {
     console.log('Accepted cookies.');
   } else {
     console.log('Cookies popup not found.');
   }
 
-  await page.click('button[type="submit"]');
-  await page.waitForNavigation();
+  // Click "save login info popup"
+  try {
+    await page.waitForNavigation({ waitUntil: 'networkidle0' });
+    console.log('Logged in successfully.');
+  } catch (error) {
+    console.error('Error waiting for navigation after login:', error);
+  }
+
+  // Wait and handle "save login info" popup
+  try {
+    await page.waitForSelector('button', { visible: false, timeout: 5000 });
+    const loginInfoPopup = await page.evaluate(() => {
+      const divs = Array.from(document.querySelectorAll('div[role="button"]'));
+      const loginPopupButton = divs.find(div => div.textContent?.includes('Not now') || div.textContent?.includes('Not'));
+      if (loginPopupButton) {
+        (loginPopupButton as HTMLElement).click();
+        return true;
+      }
+      return false;
+    });
+
+    if (loginInfoPopup) {
+      console.log("Clicked 'Not now' on login info popup.");
+    } else {
+      console.log('Login info popup not found.');
+    }
+  } catch (error) {
+    console.log('No login info popup found or error occurred:', error);
+  }
 }
 
 const initializeBot = async () => {
@@ -76,8 +103,7 @@ const initializeBot = async () => {
 
   const postUrl = 'https://www.instagram.com/p/CODE_HERE/';
 
-	console.log("closing")
-  await browser.close();
+	
 };
 
 initializeBot().catch((error) => {
