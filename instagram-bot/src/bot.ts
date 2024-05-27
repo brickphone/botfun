@@ -44,18 +44,21 @@ const login = async (page: Page) => {
   await page.type('input[name="password"]', password);
   
 
-  // Log the properties of the login button before clicking
-  const loginButton = await page.$('button[type="submit"]');
-  if (loginButton) {
-    const buttonProperties = await page.evaluate(button => {
-      return {
-        text: button.textContent,
-        disabled: button.disabled,
-        type: button.type,
-        class: button.className
-      };
-    }, loginButton);
-    console.log('Login button properties:', buttonProperties);
+  // Click login button
+  const accepted = await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'));
+    const loginButton = buttons.find(button => button.textContent?.includes('Log in') || button.textContent?.includes('Login'));
+    if (loginButton) {
+      loginButton.click();
+      return true;
+    }
+    return false;
+  });
+
+  if (accepted) {
+    console.log('Accepted cookies.');
+  } else {
+    console.log('Cookies popup not found.');
   }
 
   await page.click('button[type="submit"]');
