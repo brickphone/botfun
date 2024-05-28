@@ -1,6 +1,6 @@
 import { Page } from "puppeteer";
 
-const username = 'xcoinsfifa';
+const username = 'hurrfager';
 const password = 'Hurrmas123';
 
 const delay = (time: number) => new Promise(resolve => setTimeout(resolve, time));
@@ -69,7 +69,6 @@ export const login = async (page: Page) => {
 
   // Wait and handle "save login info" popup
   try {
-    console.log('Waiting for "save login info" popup...');
     await delay(5000); // Adding a delay to ensure the popup has time to appear
     const loginInfoPopupClicked = await page.evaluate(() => {
       const divs = Array.from(document.querySelectorAll('div[role="button"]'));
@@ -82,7 +81,7 @@ export const login = async (page: Page) => {
     });
 
     if (loginInfoPopupClicked) {
-      console.log("Clicked 'Not now' on login info popup.");
+      console.log("Clicked popup.");
     } else {
       console.log('Login info popup not found.');
     }
@@ -92,7 +91,6 @@ export const login = async (page: Page) => {
 
   // Wait and handle "notifications popup"
   try {
-    console.log('Waiting for "notifications" popup...');
     await delay(5000);
     const notificationsPopupClicked = await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button'));
@@ -105,7 +103,7 @@ export const login = async (page: Page) => {
     });
 
     if (notificationsPopupClicked) {
-      console.log("Clicked 'Not Now' on notifications popup.");
+      console.log("Clicked second popup.");
     } else {
       console.log('Notifications popup not found.');
     }

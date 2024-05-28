@@ -1,5 +1,11 @@
-import puppeteer, { Page } from "puppeteer";
+import puppeteer, { Page } from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { login } from "./helpers/login";
+import fs from "fs";
+import path from "path";
+
+// avoids detection
+puppeteer.use(StealthPlugin());
 
 const initializeBot = async () => {
   const browser = await puppeteer.launch({
