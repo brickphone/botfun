@@ -70,8 +70,7 @@ const login = async (page: Page) => {
   }
 
   // Wait and handle "save login info" popup
-  try {
-    await page.waitForSelector('button', { visible: false, timeout: 5000 });
+  await page.waitForSelector('button', { visible: false, timeout: 5000 });
     const loginInfoPopup = await page.evaluate(() => {
       const divs = Array.from(document.querySelectorAll('div[role="button"]'));
       const loginPopupButton = divs.find(div => div.textContent?.includes('Not now') || div.textContent?.includes('Not'));
@@ -82,15 +81,30 @@ const login = async (page: Page) => {
       return false;
     });
 
-    if (loginInfoPopup) {
-      console.log("Clicked 'Not now' on login info popup.");
-    } else {
-      console.log('Login info popup not found.');
-    }
-  } catch (error) {
-    console.log('No login info popup found or error occurred:', error);
+  if (loginInfoPopup) {
+    console.log("Clicked 'Not now' on login info popup.");
+  } else {
+    console.log('Login info popup not found.');
   }
-}
+
+  // Clicking "notifications popup"
+  await page.waitForSelector('button', { visible: false, timeout: 5000 });
+  const ntfBtn = await page.evaluate(() => {
+    const ntfButtons = Array.from(document.querySelectorAll('button'));
+    const notifyButton = ntfButtons.find(ntfButton => ntfButton.textContent?.includes("Not Now"));
+    if (notifyButton) {
+      notifyButton.click();
+      return true;
+    }
+    return false;
+  });
+
+  if (ntfBtn) {
+    console.log("clicked notify button");
+  } else {
+    console.log('Login info popup not found.');
+  }
+};
 
 const initializeBot = async () => {
   const browser = await puppeteer.launch({
