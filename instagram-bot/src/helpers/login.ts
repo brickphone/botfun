@@ -31,7 +31,7 @@ const acceptCookies = async (page: Page) => {
     }
   };
 
-export const login = async (page: Page) => {
+export const login = async (page: Page, username: string, password: string) => {
   console.log("Navigating to Instagram login page...");
   await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'networkidle0' });
   console.log("Page fully loaded.");
