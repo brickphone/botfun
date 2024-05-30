@@ -1,14 +1,25 @@
 import { Page } from "puppeteer";
 
-const username = 'hurrfager';
-const password = 'Hurrmas123';
-
 const delay = (time: number) => new Promise(resolve => setTimeout(resolve, time));
 
+
+// Dismissing "bot challenge"
+const dismissChallenge = async (page: Page) => {
+  try {
+    const dismissButtonSelect = '[aria-label="Dismiss"]';
+    await page.waitForSelector(dismissButtonSelect, { timeout: 5000 });
+    await page.click(dismissButtonSelect);
+    console.log("bot challenge clicked.");
+  } catch (error) {
+    console.log("No challenge found.");
+  }
+};
+
+// Accepting page cookies
 const acceptCookies = async (page: Page) => {
     // Wait for the cookies popup and click "Accept All" if it appears
     try {
-      await page.waitForSelector('button', { visible: true, timeout: 10000 });
+      await page.waitForSelector('button', { visible: true, timeout: 5000 });
       
       // Use page.evaluate to handle the cookies popup
       const accepted = await page.evaluate(() => {
@@ -29,7 +40,7 @@ const acceptCookies = async (page: Page) => {
     } catch (error) {
       console.log('No cookies popup found or error occurred:', error);
     }
-  };
+};
 
 export const login = async (page: Page, username: string, password: string) => {
   console.log("Navigating to Instagram login page...");
@@ -87,7 +98,9 @@ export const login = async (page: Page, username: string, password: string) => {
     }
   } catch (error) {
     console.log('No login info popup found or error occurred:', error);
-  }
+  };
+
+  await dismissChallenge(page);
 
   // Wait and handle "notifications popup"
   try {

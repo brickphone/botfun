@@ -11,11 +11,13 @@
   "description": "",
   "dependencies": {
     "@types/node": "^20.12.12",
-    "@types/puppeteer": "^7.0.4",
     "puppeteer": "^22.10.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@types/puppeteer": "^7.0.4"
   }
 }

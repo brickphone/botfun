@@ -6,6 +6,13 @@ import fs from "fs";
 import path from "path";
 
 
+const likeComment = async (page: Page) => {
+  const commentBox = await page.waitForSelector(".xryxfnj");
+  const commentSelector = `xpath=//span[text()='voiceoverydotcom']`;
+  console.log("commentBox", commentBox);
+  console.log("commentSelector:", commentSelector);
+};
+
 // avoids detection
 puppeteer.use(StealthPlugin());
 
@@ -34,12 +41,13 @@ const initializeBot = async () => {
     await page.goto(postUrl, { waitUntil: 'networkidle0' });
     console.log("Post loaded");
 
+    // Like comment
+    likeComment(page);
+
     // Close the context after actions are done to ensure sessions are isolated
-    await context.close();
   }));
 
   console.log("Exiting.");
-  await browser.close();
 };
 
 
