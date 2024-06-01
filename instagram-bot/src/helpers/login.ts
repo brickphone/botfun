@@ -7,7 +7,7 @@ const delay = (time: number) => new Promise(resolve => setTimeout(resolve, time)
 const dismissChallenge = async (page: Page) => {
   try {
     const dismissButtonSelect = '[aria-label="Dismiss"]';
-    await page.waitForSelector(dismissButtonSelect, { timeout: 5000 });
+    await page.waitForSelector(dismissButtonSelect, { timeout: 2000 });
     await page.click(dismissButtonSelect);
     console.log("bot challenge clicked.");
   } catch (error) {
@@ -78,6 +78,8 @@ export const login = async (page: Page, username: string, password: string) => {
     console.error('Error waiting for navigation after login:', error);
   }
 
+  await dismissChallenge(page);
+
   // Wait and handle "save login info" popup
   try {
     await delay(5000); // Adding a delay to ensure the popup has time to appear
@@ -123,4 +125,7 @@ export const login = async (page: Page, username: string, password: string) => {
   } catch (error) {
     console.log('No notifications popup found or error occurred:', error);
   }
+
+  await dismissChallenge(page);
+
 };
