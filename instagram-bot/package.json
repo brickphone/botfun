@@ -18,6 +18,7 @@
     "typescript": "^5.4.5"
   },
   "devDependencies": {
-    "@types/puppeteer": "^7.0.4"
+    "@types/puppeteer": "^7.0.4",
+    "proxy-chain": "^2.4.0"
   }
 }

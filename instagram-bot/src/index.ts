@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer-extra";
 import { Page } from "puppeteer";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import AnonymizeUA from "puppeteer-extra-plugin-stealth";
 import { login } from "./helpers/login";
 import fs from "fs";
 import path from "path";
@@ -43,6 +44,21 @@ const likeComment = async (page: Page, username: string) => {
 
 // avoids detection
 puppeteer.use(StealthPlugin());
+puppeteer.use(AnonymizeUA());
+
+// proxy servers
+const proxies = [
+  '125.212.225.132:16355',
+  '134.236.8.227:4145',
+  '5.172.188.93:5678',
+  '38.127.179.124:15290',
+];
+
+// randomize proxies
+const getRandomProxy = () => {
+  const proxy = proxies[Math.floor(Math.random() * proxies.length)];
+  return proxy;
+}
 
 const initializeBot = async () => {
   // Parsing accounts
@@ -50,13 +66,43 @@ const initializeBot = async () => {
   const accountsData = fs.readFileSync(accountsPath, 'utf-8');
   const accounts = JSON.parse(accountsData);
   
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: puppeteer.executablePath(),
-  });
+  // randomize user agent
+  function getRandomUserAgent() {
+    const userAgents = [
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0",
+      "Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1",
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/69.0.3497.105 Mobile/15E148 Safari/605.1",
+    ];
+    return userAgents[Math.floor(Math.random() * userAgents.length)];
+  };
+
+  // randomize viewport
+  function getRandomInt(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
 
   // logging into all accounts
   await Promise.all(accounts.map(async (account: { username: string; password: string; }) => {
+    const proxy = getRandomProxy();
+    console.log(`using proxy ${proxy}`);
+    
+    const browser = await puppeteer.launch({
+      headless: false,
+      executablePath: puppeteer.executablePath(),
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        `--user-agent=${getRandomUserAgent()}`,
+        `--proxy-server=socks4:${proxy}`,
+      ],
+      defaultViewport: {
+        width: getRandomInt(1280, 1920),
+        height: getRandomInt(720, 1080),
+      }
+    });
+
     const context = await browser.createBrowserContext();
     const page = await context.newPage();
 
