@@ -46,19 +46,6 @@ const likeComment = async (page: Page, username: string) => {
 puppeteer.use(StealthPlugin());
 puppeteer.use(AnonymizeUA());
 
-// proxy servers
-const proxies = [
-  '125.212.225.132:16355',
-  '134.236.8.227:4145',
-  '5.172.188.93:5678',
-  '38.127.179.124:15290',
-];
-
-// randomize proxies
-const getRandomProxy = () => {
-  const proxy = proxies[Math.floor(Math.random() * proxies.length)];
-  return proxy;
-}
 
 const initializeBot = async () => {
   // Parsing accounts
@@ -85,8 +72,6 @@ const initializeBot = async () => {
 
   // logging into all accounts
   await Promise.all(accounts.map(async (account: { username: string; password: string; }) => {
-    const proxy = getRandomProxy();
-    console.log(`using proxy ${proxy}`);
     
     const browser = await puppeteer.launch({
       headless: false,
@@ -95,7 +80,7 @@ const initializeBot = async () => {
         '--no-sandbox',
         '--disable-setuid-sandbox',
         `--user-agent=${getRandomUserAgent()}`,
-        `--proxy-server=socks4:${proxy}`,
+        '--proxy-server=38.154.227.167:5868',
       ],
       defaultViewport: {
         width: getRandomInt(1280, 1920),
@@ -105,6 +90,10 @@ const initializeBot = async () => {
 
     const context = await browser.createBrowserContext();
     const page = await context.newPage();
+    await page.authenticate({
+      username: 'yelqohab',
+      password: 'mregt3cbowd3',
+    });
 
     console.log(`Logging in with account: ${account.username}`);
 

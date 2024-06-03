@@ -2,7 +2,6 @@ import { Page } from "puppeteer";
 
 const delay = (time: number) => new Promise(resolve => setTimeout(resolve, time));
 
-
 // Dismissing "bot challenge"
 const dismissChallenge = async (page: Page) => {
   try {
